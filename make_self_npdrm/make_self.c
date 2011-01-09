@@ -284,7 +284,6 @@ void enumerate_segments() {
   }
 }
 
-//u8 npdrm_hash_unknown[] = {0xEC,0x7A,0xF2,0x1D,0xD9,0xE6,0x94,0xCA,0x8E,0x4C,0x8C,0x62,0x01,0x8F,0x66,0xF6};
 
 void init_Self_NPDRM(Self_NPDRM* npdrm, char* titleid, char* filename) {
   set_u32(&npdrm->block_type, 3);
@@ -294,7 +293,6 @@ void init_Self_NPDRM(Self_NPDRM* npdrm, char* titleid, char* filename) {
   set_u32(&npdrm->unknown4, 3);
   set_u32(&npdrm->unknown5, 1);
   strncpy(npdrm->titleid, titleid, 0x30);
-  //memcpy(npdrm->hash_unknown, npdrm_hash_unknown, sizeof(npdrm_hash_unknown));
 
   char *true_filename = strrchr(filename,'/');
   if(true_filename == NULL) {
@@ -388,7 +386,7 @@ int main(int argc, char* argv[]) {
 
 #ifdef NPDRM
   if(argc < 3) {
-    printf("usage: %s input.elf output.self <titleid>\n", argv[0]);
+    printf("usage: %s input.elf output.self <content_id>\n", argv[0]);
     printf("  warning NPDRM cares about the output file name, do not rename\n");
     return -1;
   }
@@ -571,11 +569,6 @@ int main(int argc, char* argv[]) {
  
   //mpz_export(all_signed.S, &countp, 1, 0x14, 1, 0, cs);
   mpz_export(&output_self_data[get_u64(&output_self_data[get_u32(output_self_data+0xC)+0x60])+0x16], &countp, 1, 0x14, 1, 0, cs);
-
-// write the output self test
-  FILE *test_self_file = fopen("test_out", "wb");
-  fwrite(output_self_data, 1, running_size, test_self_file);
-  fclose(test_self_file);
 
 // encrypt metadata
   int metadata_offset = get_u32(&(output_self_header.s_esize)) + sizeof(Self_Shdr);
