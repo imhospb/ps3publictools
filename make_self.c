@@ -13,15 +13,15 @@
 #include <openssl/aes.h>
 #include "zlib.h"
 
-#include "../include/ps3_common.h"
-#include "../include/elf.h"
-#include "../include/keys.h"
-#include "../include/oddkeys.h"
-#include "../include/sha1_hmac.h"
+#include "include/ps3_common.h"
+#include "include/elf.h"
+#include "include/keys.h"
+#include "include/oddkeys.h"
+#include "include/sha1_hmac.h"
 
-#include "../include/self.h"
+#include "include/self.h"
 
-#include "../include/aes_omac.h"
+#include "include/aes_omac.h"
 
 //#define NO_CRYPT
 #define NPDRM

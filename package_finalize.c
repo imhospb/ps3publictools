@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/ps3_common.h"
-#include "../include/oddkeys.h"
+#include "include/ps3_common.h"
+#include "include/oddkeys.h"
 #include <openssl/sha.h>
 #include <openssl/aes.h>
 
