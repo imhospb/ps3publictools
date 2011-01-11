@@ -24,7 +24,7 @@
 #include "include/aes_omac.h"
 
 //#define NO_CRYPT
-#define NPDRM
+//#define NPDRM
 //#define SPRX
 
 #ifdef NPDRM
@@ -441,18 +441,16 @@ int main(int argc, char* argv[]) {
 
 // generate metadata encryption keys
   metadata_crypt_header md_header; memset(&md_header, 0, sizeof(md_header));
+  memcpy(&md_header, KEY(keypair_d), sizeof(md_header));
 
-#ifdef NPDRM
-  memcpy(&md_header, npdrm_keypair_d, sizeof(md_header));
-#else
-  mpz_t bigriv, bigerk;
+// can't generate random without symmetric keys
+/*mpz_t bigriv, bigerk;
   mpz_init(bigriv); mpz_init(bigerk);
   mpz_urandomb(bigerk, r_state, 128);
   mpz_urandomb(bigriv, r_state, 128);
 
   mpz_export(md_header.erk, &countp, 1, 0x10, 1, 0, bigerk);
-  mpz_export(md_header.riv, &countp, 1, 0x10, 1, 0, bigriv);
-#endif
+  mpz_export(md_header.riv, &countp, 1, 0x10, 1, 0, bigriv);*/
 
 // init signing shit
   mpz_t n,k,da,kinv,r,cs,z;
@@ -578,17 +576,9 @@ int main(int argc, char* argv[]) {
   AES_set_encrypt_key(&output_self_data[metadata_offset], 128, &aes_key);
   memcpy(iv, &output_self_data[metadata_offset+0x20], 16);
   AES_ctr128_encrypt(&output_self_data[0x40+metadata_offset], &output_self_data[0x40+metadata_offset], get_u64(&(output_self_header.s_shsize))-metadata_offset-0x40, &aes_key, iv, ecount_buf, &num);
-  printf("encrypted metadata\n");
-
-#ifdef NPDRM
-  memcpy(&output_self_data[metadata_offset], npdrm_keypair_e, sizeof(md_header));
-#else
-  AES_set_encrypt_key(KEY(erk), 256, &aes_key);
-  memcpy(iv, KEY(riv), 16);
-  AES_cbc_encrypt(&output_self_data[metadata_offset], &output_self_data[metadata_offset], 0x40, &aes_key, iv, AES_ENCRYPT);
-  printf("encrypted keys\n");
-#endif
-
+  memcpy(&output_self_data[metadata_offset], KEY(keypair_e), sizeof(md_header));
+  /*AES_set_encrypt_key(KEY(erk), 256, &aes_key);
+  AES_cbc_encrypt(&output_self_data[metadata_offset], &output_self_data[metadata_offset], 0x40, &aes_key, iv, AES_ENCRYPT);*/
 #else
   printf("NO_CRYPT is enabled...self is broken\n");
 #endif
